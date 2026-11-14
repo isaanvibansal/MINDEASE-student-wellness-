@@ -2,34 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf }}">
+    <meta name="open-entry" content="{{ open_id }}">
     <title>Journal | MINDEASE</title>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='notebook.css') }}">
 </head>
-<body>
+<body class="nb-room">
 
-<form action="/save_journal" method="POST">
-    <div class="journal-wrapper">
-        <div class="notebook">
-            <div class="page left-page">
-                <h2>My Thoughts ✍️</h2>
-                <textarea name="leftText" placeholder="Start writing here..."></textarea>
-            </div>
+<header class="nb-top">
+    <button type="button" id="nbBack" class="nb-btn">← Dashboard</button>
+    <span id="nbIndicator" class="nb-indicator">Closed</span>
+    <span id="say" class="nb-say" role="status" aria-live="polite"></span>
+</header>
 
-            <div class="spine"></div>
-
-            <div class="page right-page">
-                <h2>Reflections 🌿</h2>
-                <textarea name="rightText" placeholder="What did you learn today?"></textarea>
-            </div>
-        </div>
-
-        <div class="journal-actions">
-            <button type="submit" class="save-btn">Save Entry</button>
-            <a href="/dashboard" class="back-btn">Back</a>
+<div class="nb-stage">
+    <div class="nb-shift closed" id="shift">
+        <div class="nb-book" id="book">
+            <div class="nb-rboard"></div>
+            <i class="nb-cast nb-cast-l" id="castL"></i>
+            <i class="nb-cast nb-cast-r" id="castR"></i>
+            <i class="nb-spine"></i>
+            <div class="nb-edge nb-edge-l" id="edgeL" hidden aria-hidden="true"></div>
+            <div class="nb-edge nb-edge-r" id="edgeR" hidden aria-hidden="true"></div>
         </div>
     </div>
-</form>
+</div>
 
+<fieldset class="nb-tools" id="tools" disabled>
+    <legend class="nb-sr">Decorate this page</legend>
+    <button type="button" class="nb-btn" data-sticker="🌸" aria-label="Add flower sticker">🌸</button>
+    <button type="button" class="nb-btn" data-sticker="💖" aria-label="Add heart sticker">💖</button>
+    <button type="button" class="nb-btn" data-sticker="⭐" aria-label="Add star sticker">⭐</button>
+    <button type="button" class="nb-btn" data-sticker="🦋" aria-label="Add butterfly sticker">🦋</button>
+    <button type="button" class="nb-btn" data-sticker="☁️" aria-label="Add cloud sticker">☁️</button>
+    <button type="button" class="nb-btn" data-sticker="🌿" aria-label="Add leaf sticker">🌿</button>
+    <button type="button" class="nb-btn" data-sticker="✨" aria-label="Add sparkle sticker">✨</button>
+    <button type="button" class="nb-btn" id="photoBtn">📷 Photo</button>
+    <input type="file" id="photo" accept="image/jpeg,image/png,image/webp" hidden>
+    <button type="button" class="nb-btn" id="noteBtn">📝 Note</button>
+    <span class="nb-sep"></span>
+    <button type="button" class="nb-btn" id="smaller" aria-label="Make selected smaller">−</button>
+    <button type="button" class="nb-btn" id="bigger" aria-label="Make selected bigger">+</button>
+    <button type="button" class="nb-btn" id="rotate" aria-label="Rotate selected">⟳</button>
+    <button type="button" class="nb-btn" id="removeItem" aria-label="Remove selected">🗑️</button>
+</fieldset>
+
+<nav class="nb-nav" aria-label="Notebook controls">
+    <button type="button" class="nb-btn" id="prev" disabled>◀ Previous</button>
+    <button type="button" class="nb-btn" id="next" disabled>Next ▶</button>
+    <button type="button" class="nb-btn" id="newEntry" disabled>＋ New Entry</button>
+    <button type="button" class="nb-btn primary" id="save" disabled>💾 Save Entry</button>
+    <button type="button" class="nb-btn danger" id="del" disabled>Delete</button>
+</nav>
+
+<dialog id="dlg" class="nb-dlg">
+    <p id="dlgMsg"></p>
+    <div id="dlgBtns" class="nb-dlg-btns"></div>
+</dialog>
+
+<script src="{{ url_for('static', filename='notebook.js') }}"></script>
 </body>
 </html>

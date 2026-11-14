@@ -1,0 +1,614 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Study Planner | MindEase</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        :root {
+            --green: #477b67;
+            --green-dark: #315e4d;
+            --mint: #e9f3ed;
+            --cream: #faf8f2;
+            --ink: #263b32;
+            --muted: #728078;
+            --line: #e5eae4;
+            --rose: #f9e8e5;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 32px 18px;
+            background: linear-gradient(135deg, #edf4ed, #faf6ed);
+            color: var(--ink);
+            font-family: "Poppins", Arial, sans-serif;
+        }
+
+        .planner-shell {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+        }
+
+        .planner-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .back-link {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--green-dark);
+            border: 1px solid #d7e4d9;
+            background: white;
+            border-radius: 24px;
+            padding: 10px 16px;
+            font-size: 13px;
+        }
+
+        .planner-hero {
+            padding: 32px;
+            border-radius: 26px;
+            background: linear-gradient(120deg, #dceee1, #f5f1df);
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            color: var(--green-dark);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .planner-hero h1 {
+            margin: 10px 0;
+            font-size: clamp(28px, 4vw, 42px);
+        }
+
+        .planner-hero p {
+            max-width: 620px;
+            color: #52685c;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(255,255,255,.92);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 29px;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .planner-layout {
+            display: grid;
+            grid-template-columns: 340px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: 0 8px 28px rgba(47, 74, 57, .04);
+        }
+
+        .panel h2 {
+            font-size: 20px;
+            margin: 0 0 8px;
+        }
+
+        .panel-intro {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+            margin: 0 0 22px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #dfe7df;
+            border-radius: 11px;
+            background: #fcfdfb;
+            color: var(--ink);
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            outline: 2px solid #c7dfcd;
+            border-color: var(--green);
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 13px 16px;
+            border: 0;
+            border-radius: 12px;
+            background: var(--green);
+            color: white;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .primary-btn:hover {
+            background: var(--green-dark);
+        }
+
+        .task-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .task-heading h2 {
+            margin: 0;
+        }
+
+        .filter-select {
+            padding: 9px 12px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: white;
+            color: var(--ink);
+        }
+
+        .task-list {
+            display: grid;
+            gap: 13px;
+        }
+
+        .task-card {
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #fff;
+        }
+
+        .task-card.is-complete {
+            background: #f7faf7;
+            opacity: .8;
+        }
+
+        .task-card.is-overdue {
+            border-color: #edc9c3;
+        }
+
+        .task-main {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .task-main input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 5px;
+            accent-color: var(--green);
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            margin: 0 0 6px;
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .is-complete .task-title {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef3ee;
+            color: #52665a;
+            font-size: 11px;
+        }
+
+        .priority-high {
+            background: #f9e7e3;
+            color: #9a493d;
+        }
+
+        .priority-medium {
+            background: #fff1d9;
+            color: #866321;
+        }
+
+        .priority-low {
+            background: #e6f1e8;
+            color: #3d7550;
+        }
+
+        .task-due {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .task-due.overdue {
+            color: #b64b3e;
+            font-weight: 700;
+        }
+
+        .task-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 14px;
+        }
+
+        .delete-btn {
+            padding: 7px 11px;
+            border: 1px solid #efd5d1;
+            border-radius: 9px;
+            background: white;
+            color: #a44c43;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            padding: 36px 18px;
+            text-align: center;
+            background: #f8faf6;
+            border: 1px dashed #d5e1d5;
+            border-radius: 16px;
+        }
+
+        .empty-state .emoji {
+            font-size: 36px;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .gentle-note {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--mint);
+            border-radius: 14px;
+            color: var(--green-dark);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 850px) {
+            .planner-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 18px 12px;
+            }
+
+            .planner-hero,
+            .panel {
+                padding: 20px;
+            }
+
+            .planner-topbar {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="planner-shell">
+
+    <header class="planner-topbar">
+        <div class="brand">🌿 MindEase</div>
+        <a class="back-link" href="{{ url_for('dashboard') }}">
+            ← Dashboard
+        </a>
+    </header>
+
+    <section class="planner-hero">
+        <div class="eyebrow">Your academic wellness space</div>
+        <h1>Study at your own pace.</h1>
+        <p>
+            Organize assignments, prepare for exams and break your workload
+            into manageable steps. Progress matters more than perfection.
+        </p>
+    </section>
+
+    <section class="stats" aria-label="Task summary">
+        <div class="stat-card">
+            <span class="stat-number">{{ total }}</span>
+            <span class="stat-label">All tasks</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">{{ pending_count }}</span>
+            <span class="stat-label">In progress</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">{{ completed_count }}</span>
+            <span class="stat-label">Completed</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">{{ overdue_count }}</span>
+            <span class="stat-label">Overdue</span>
+        </div>
+    </section>
+
+    <main class="planner-layout">
+
+        <section class="panel">
+            <h2>＋ Add a study task</h2>
+            <p class="panel-intro">
+                Start with one clear next step. You can update it later.
+            </p>
+
+            <form action="{{ url_for('planner_add') }}" method="POST">
+                <div class="field">
+                    <label for="title">Task title *</label>
+                    <input id="title" name="title" maxlength="120"
+                           placeholder="e.g. Revise DBMS normalization"
+                           required>
+                </div>
+
+                <div class="field">
+                    <label for="subject">Subject</label>
+                    <input id="subject" name="subject" maxlength="80"
+                           placeholder="e.g. Database Management">
+                </div>
+
+                <div class="field">
+                    <label for="task_type">Task type</label>
+                    <select id="task_type" name="task_type">
+                        <option value="assignment">Assignment</option>
+                        <option value="exam">Exam</option>
+                        <option value="revision">Revision</option>
+                        <option value="project">Project</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="due_date">Due date</label>
+                    <input id="due_date" name="due_date" type="date">
+                </div>
+
+                <div class="field">
+                    <label for="priority">Priority</label>
+                    <select id="priority" name="priority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="estimated_minutes">
+                        Estimated study time (minutes)
+                    </label>
+                    <input id="estimated_minutes" name="estimated_minutes"
+                           type="number" min="5" max="600" value="30" required>
+                </div>
+
+                <button class="primary-btn" type="submit">
+                    Add to my planner
+                </button>
+            </form>
+
+            <div class="gentle-note">
+                🌱 Tip: turn a big task into a small action you can begin today.
+                You don't have to finish everything at once.
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="task-heading">
+                <h2>My study tasks</h2>
+                <select id="taskFilter" class="filter-select"
+                        aria-label="Filter study tasks">
+                    <option value="all">All tasks</option>
+                    <option value="pending">In progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="overdue">Overdue</option>
+                </select>
+            </div>
+
+            {% if tasks %}
+                <div class="task-list" id="taskList">
+                    {% for task in tasks %}
+                        <article
+                            class="task-card
+                                {% if task.completed %}is-complete{% endif %}
+                                {% if not task.completed and task.due_date and task.due_date < today %}is-overdue{% endif %}"
+                            data-completed="{{ 'true' if task.completed else 'false' }}"
+                            data-overdue="{{ 'true' if not task.completed and task.due_date and task.due_date < today else 'false' }}">
+
+                            <div class="task-main">
+                                <form action="{{ url_for('planner_toggle', task_id=task._id) }}"
+                                      method="POST">
+                                    <input type="checkbox"
+                                           aria-label="Toggle task completion"
+                                           {% if task.completed %}checked{% endif %}
+                                           onchange="this.form.submit()">
+                                </form>
+
+                                <div class="task-content">
+                                    <h3 class="task-title">{{ task.title }}</h3>
+
+                                    {% if task.subject %}
+                                        <div class="task-due">
+                                            📚 {{ task.subject }}
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="task-meta">
+                                        <span class="tag">
+                                            {{ task.task_type|title }}
+                                        </span>
+                                        <span class="tag priority-{{ task.priority }}">
+                                            {{ task.priority|title }} priority
+                                        </span>
+                                        <span class="tag">
+                                            ⏱ {{ task.estimated_minutes }} min
+                                        </span>
+                                    </div>
+
+                                    {% if task.due_date %}
+                                        <div class="task-due
+                                            {% if not task.completed and task.due_date < today %}overdue{% endif %}">
+                                            {% if not task.completed and task.due_date < today %}
+                                                ⚠ Overdue ·
+                                            {% else %}
+                                                📅 Due ·
+                                            {% endif %}
+                                            {{ task.due_date }}
+                                        </div>
+                                    {% else %}
+                                        <div class="task-due">No due date set</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="task-actions">
+                                <form action="{{ url_for('planner_delete', task_id=task._id) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Delete this task?');">
+                                    <button class="delete-btn" type="submit">
+                                        Delete task
+                                    </button>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <p id="noFilteredTasks" class="panel-intro"
+                   style="display:none; margin-top:20px;">
+                    No tasks match this filter.
+                </p>
+            {% else %}
+                <div class="empty-state">
+                    <div class="emoji">🪴</div>
+                    <h3>Your planner starts here</h3>
+                    <p>
+                        Add an assignment, an exam or one small revision task.
+                        Your tasks will appear here.
+                    </p>
+                </div>
+                <div id="taskList" style="display:none;"></div>
+                <p id="noFilteredTasks" style="display:none;"></p>
+            {% endif %}
+        </section>
+
+    </main>
+</div>
+
+<script>
+    const filter = document.getElementById("taskFilter");
+    const taskCards = Array.from(document.querySelectorAll(".task-card"));
+    const emptyMessage = document.getElementById("noFilteredTasks");
+
+    filter.addEventListener("change", function () {
+        let visibleCount = 0;
+
+        taskCards.forEach(card => {
+            const completed = card.dataset.completed === "true";
+            const overdue = card.dataset.overdue === "true";
+
+            let visible = true;
+
+            if (filter.value === "pending") visible = !completed;
+            if (filter.value === "completed") visible = completed;
+            if (filter.value === "overdue") visible = overdue;
+
+            card.style.display = visible ? "" : "none";
+            if (visible) visibleCount++;
+        });
+
+        if (emptyMessage) {
+            emptyMessage.style.display =
+                taskCards.length > 0 && visibleCount === 0 ? "block" : "none";
+        }
+    });
+
+    // Prevent selecting a due date earlier than today in the normal UI.
+    // The backend still accepts older dates for existing or imported tasks.
+    document.getElementById("due_date").min =
+        new Date().toLocaleDateString("en-CA");
+</script>
+</body>
+</html>

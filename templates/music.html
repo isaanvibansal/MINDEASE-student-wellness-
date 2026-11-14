@@ -2,10 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Music Therapy | MINDEASE</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
     <style>
-        .mood-options { margin-bottom: 20px; }
+        .mood-options {
+            margin-bottom: 20px;
+        }
+
         .mood-btn {
             padding: 10px 20px;
             margin: 5px;
@@ -17,56 +24,173 @@
             text-decoration: none;
             display: inline-block;
         }
-        .active-mood { background-color: #2E7D32; font-weight: bold; }
+
+        .active-mood {
+            background-color: #2E7D32;
+            font-weight: bold;
+        }
+
+        .recommendations-section {
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .recommendations-section > h2,
+        .recommendations-section > p {
+            text-align: center;
+        }
+
+        #music-recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .recommended-track {
+            padding: 16px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .recommended-track h3 {
+            margin-top: 0;
+        }
+
+        .recommended-track iframe {
+            width: 100%;
+            border: 0;
+            border-radius: 12px;
+        }
+
+        #music-loading,
+        #music-error {
+            text-align: center;
+            margin: 18px 0;
+        }
+
+        .back-button {
+            margin-top: 25px;
+        }
+
+        @media (max-width: 600px) {
+            .mood-btn {
+                padding: 9px 14px;
+            }
+
+            #music-recommendations {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
+
 <body>
 
 <div class="dashboard-card">
+
     <h1>Music Therapy 🎵</h1>
     <p>Select music based on your mood</p>
-    
-    <div class="mood-options">
-        <h3>Select Your Mood 👇</h3>
-        <a href="{{ url_for('music', mood='happy') }}" class="mood-btn {% if current_mood == 'happy' %}active-mood{% endif %}">😊 Happy</a>
-        <a href="{{ url_for('music', mood='sad') }}" class="mood-btn {% if current_mood == 'sad' %}active-mood{% endif %}">😢 Sad</a>
-        <a href="{{ url_for('music', mood='stressed') }}" class="mood-btn {% if current_mood == 'stressed' %}active-mood{% endif %}">😣 Stressed</a>
-        <a href="{{ url_for('music', mood='angry') }}" class="mood-btn {% if current_mood == 'angry' %}active-mood{% endif %}">😤 Angry</a>
+
+
+    <!-- New personalized recommendations -->
+    <section class="recommendations-section">
+        <h2>✨ Recommended for Your Mood</h2>
+        <p>Discover tracks selected to match your mood.</p>
+
+        <div id="music-loading" role="status" style="display:none;">
+            🎵 Finding your music...
+        </div>
+
+        <div id="music-error" role="status" style="display:none;"></div>
+
+        <div id="music-recommendations"></div>
+    </section>
+
+    <div class="back-button">
+        <a href="{{ url_for('dashboard') }}">
+            <button class="dash-btn logout-btn" type="button">
+                Back to Dashboard
+            </button>
+        </a>
     </div>
 
-    <hr>
-
-    <h3 style="text-transform: capitalize;">
-    🎧 {{ current_mood }} Playlists
-    </h3>
-
-{% for category, playlist in playlists.items() %}
-
-    <div class="playlist-card">
-
-        <h4>{{ category }}</h4>
-
-        <iframe
-            style="border-radius:12px"
-            src="https://open.spotify.com/embed/playlist/{{ playlist }}"
-            width="100%"
-            height="352"
-            frameborder="0"
-            allowfullscreen=""
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy">
-        </iframe>
-
-    </div>
-
-<br>
-
-{% endfor %}
-
-    <a href="/dashboard">
-        <button class="dash-btn logout-btn">Back to Dashboard</button>
-    </a>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", loadRecommendations);
+
+async function loadRecommendations() {
+    const mood = {{ current_mood | tojson }};
+    const container = document.getElementById("music-recommendations");
+    const loading = document.getElementById("music-loading");
+    const error = document.getElementById("music-error");
+
+    loading.style.display = "block";
+    error.style.display = "none";
+    container.replaceChildren();
+
+    try {
+        const response = await fetch(
+            `/api/music/${encodeURIComponent(mood)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "Could not load music recommendations."
+            );
+        }
+
+        if (!Array.isArray(data.tracks) || data.tracks.length === 0) {
+            error.textContent =
+                data.note || "No recommendations available for this mood.";
+            error.style.display = "block";
+            return;
+        }
+
+        data.tracks.forEach(track => {
+            const card = document.createElement("div");
+            card.className = "recommended-track";
+
+            const title = document.createElement("h3");
+            title.textContent = track.title || "Untitled track";
+
+            const artist = document.createElement("p");
+            artist.textContent = "🎤 " + (track.artist || "Unknown artist");
+
+            card.append(title, artist);
+
+            if (track.embed) {
+                const player = document.createElement("iframe");
+                player.src = track.embed;
+                player.title = `Play ${track.title || "track"}`;
+                player.height = "152";
+                player.loading = "lazy";
+                player.allow =
+                    "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+
+                card.appendChild(player);
+            }
+
+            container.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error("Music recommendations error:", err);
+
+        error.textContent =
+            "Unable to load recommendations. Please check the music API and try again.";
+        error.style.display = "block";
+
+    } finally {
+        loading.style.display = "none";
+    }
+}
+</script>
 
 </body>
 </html>

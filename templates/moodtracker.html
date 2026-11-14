@@ -1,194 +1,253 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindEase - How are you?</title>
+    <title>MindEase | Mood Tracker</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
 
     <style>
-        body{
-
-            background:
-            linear-gradient(
-                135deg,
-                #dff6ff,
-                #c8f0e8
-            );
-            height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
+        :root {
+            --green: #4caf50;
+            --green-dark: #2e7d32;
+            --green-light: #e2f3e7;
+            --cream: #f8f7ef;
+            --text: #263c32;
+            --muted: #718078;
+            --white: #ffffff;
+            --border: #e1e9df;
         }
-        .mood-container{
-            text-align:center;
 
-            background:rgba(255,255,255,0.75);
-
-            backdrop-filter:blur(20px);
-
-            padding:60px;
-
-            border-radius:35px;
-
-            box-shadow:
-            0 25px 60px rgba(0,0,0,0.12);
-
-            width:1100px;
+        * {
+            box-sizing: border-box;
         }
-        
 
-    
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 35px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            background: var(--cream);
+        }
 
+        .mood-container {
+            width: 100%;
+            max-width: 1050px;
+            padding: 55px 40px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: 0 15px 45px rgba(38, 60, 50, 0.07);
+            text-align: center;
+        }
 
-        
+        .eyebrow {
+            display: inline-block;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            border-radius: 30px;
+            background: var(--green-light);
+            color: var(--green-dark);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: clamp(27px, 4vw, 40px);
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            max-width: 550px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.8;
+        }
 
         .mood-grid {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 40px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+            margin: 40px 0 30px;
         }
 
         .mood-bubble {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: none;
-            background: white;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-
+            min-height: 205px;
+            padding: 25px 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-        .happy{
-            border-top: 6px solid #FFD54F;
-        }
-
-        .angry{
-            border-top: 6px solid #EF5350;
-        }
-
-        .sad{
-            border-top: 6px solid #64B5F6;
+            gap: 12px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease,
+                        border-color 0.2s ease;
         }
 
-        .stressed{
-            border-top: 6px solid #BA68C8;
+        .mood-bubble:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(38, 60, 50, 0.10);
         }
 
-        .mood-bubble:hover{
-            transform:translateY(-10px) scale(1.08);
-
-            box-shadow:
-            0 20px 40px rgba(0,0,0,0.15);
-
-            transition:0.3s;
+        .mood-bubble:focus-visible,
+        .btn-back:focus-visible {
+            outline: 3px solid #7aa9e8;
+            outline-offset: 4px;
         }
 
-        .happy:hover{
-            background:#FFF3B0;
+        .mood-bubble.happy {
+            background: #fffaf0;
+            border-color: #f0dfad;
         }
 
-
-        .angry:hover{
-            background:#FFD6D6;
+        .mood-bubble.sad {
+            background: #f2f7ff;
+            border-color: #d7e5f8;
         }
 
-        .sad:hover{
-            background:#DDEBFF;
-       }
+        .mood-bubble.stressed {
+            background: #f8f2fb;
+            border-color: #e6d7ef;
+        }
 
-        .stressed:hover{
-            background:#F3D9FF;
-     }
+        .mood-bubble.angry {
+            background: #fff3f0;
+            border-color: #f2d7d0;
+        }
 
         .emoji {
-            font-size: 50px;
-            margin-bottom: 10px;
+            font-size: 48px;
+            line-height: 1.2;
         }
 
         .mood-bubble span {
-            font-weight: bold;
-            color: #444;
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .mood-hint {
+            margin: 0 0 25px;
+            color: var(--muted);
+            font-size: 13px;
         }
 
         .btn-back {
-            margin-top: 30px;
-            padding: 12px 30px;
+            display: inline-block;
+            padding: 13px 25px;
+            background: var(--green);
             border: none;
-            border-radius: 25px;
-            background: #00796b;
+            border-radius: 30px;
             color: white;
-            font-weight: bold;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
             cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
         }
 
         .btn-back:hover {
-            background: #004d40;
+            background: var(--green-dark);
+            transform: translateY(-2px);
         }
 
-        h1 {
-            color: #006064;
+        @media (max-width: 750px) {
+            .mood-container {
+                padding: 35px 22px;
+            }
+
+            .mood-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+                margin-top: 30px;
+            }
+
+            .mood-bubble {
+                min-height: 165px;
+            }
         }
 
-        p {
-            color: #00838f;
+        @media (max-width: 360px) {
+            .mood-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
         }
     </style>
 </head>
 
-<body id="mood-body">
+<body>
+    <main class="mood-container">
 
-<div class="mood-container">
+        <div class="eyebrow">YOUR WELLBEING MATTERS</div>
 
-    <h1>How are you feeling, {{ name }}?</h1>
+        <h1>How are you feeling, {{ name }}?</h1>
 
-    <p>Choose a mood</p>
+        <p class="subtitle">
+            Take a moment to check in with yourself.
+            There are no right or wrong feelings.
+        </p>
 
-    <form action="/save_mood" method="POST">
+        <form action="/save_mood" method="POST">
+            <div class="mood-grid">
 
-        <div class="mood-grid">
+                <button type="submit" name="mood" value="Happy"
+                        class="mood-bubble happy">
+                    <div class="emoji">😊</div>
+                    <span>Happy</span>
+                </button>
 
-            <button type="submit" name="mood" value="Happy" class="mood-bubble happy">
-                <div class="emoji">😊</div>
-                <span>Happy</span>
-            </button>
+                <button type="submit" name="mood" value="Sad"
+                        class="mood-bubble sad">
+                    <div class="emoji">🥺</div>
+                    <span>Sad</span>
+                </button>
 
-            <button type="submit" name="mood" value="Angry" class="mood-bubble angry">
-                <div class="emoji">😡</div>
-                <span>Angry</span>
-            </button>
+                <button type="submit" name="mood" value="Stressed"
+                        class="mood-bubble stressed">
+                    <div class="emoji">😫</div>
+                    <span>Stressed</span>
+                </button>
 
-            <button type="submit" name="mood" value="Sad" class="mood-bubble sad">
-                <div class="emoji">🥺</div>
-                <span>Sad</span>
-            </button>
+                <button type="submit" name="mood" value="Angry"
+                        class="mood-bubble angry">
+                    <div class="emoji">😡</div>
+                    <span>Angry</span>
+                </button>
 
-            <button type="submit" name="mood" value="Stressed" class="mood-bubble stressed">
-                <div class="emoji">😫</div>
-                <span>Stressed</span>
-            </button>
+            </div>
+        </form>
 
-        </div>
+        <p class="mood-hint">
+            🌿 Every feeling deserves a little space.
+        </p>
 
-    </form>
+        <a href="/dashboard" class="btn-back">
+            ← Back to Dashboard
+        </a>
 
-    <br>
-
-    <a href="/dashboard">
-        <button class="btn-back">
-            Back to Dashboard
-        </button>
-    </a>
-
-</div>
-
+    </main>
 </body>
 </html>
-

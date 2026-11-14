@@ -1,20 +1,33 @@
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request, redirect, url_for, session
-from datetime import datetime
+from datetime import datetime, date
+from bson import ObjectId
 import os
+import json
+from journal_api import create_journal_blueprint
+from music_recommender import create_music_blueprint
+from chatbot import create_chatbot_blueprint
 
+# MongoDB
 client = MongoClient(os.environ.get("MONGO_URI"))
-db = client["MINDEASE"]
+db = client["mindease"]
 users_collection = db["users"]
 
 print("✅ Mongo connected")
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-from datetime import datetime
-
+# Flask
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY")
+# Register MindEase AI Chatbot
+app.register_blueprint(create_chatbot_blueprint(db))
+
+# 🔐 SESSION SECRET KEY
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY",
+    "mindease-local-secret-key-2026"
+)
+app.register_blueprint(create_journal_blueprint(db))
+app.register_blueprint(create_music_blueprint())
 
 @app.route("/check")
 def check():
@@ -29,53 +42,87 @@ journals = []
 def home():
     return render_template("app.html")
 
-
-# ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        print("🔥 Signup route triggered")
 
         username = request.form.get("username")
         password = request.form.get("password")
+
+        print("🔥 Signup route triggered")
         print("Username:", username)
-        print("Password:", password)
 
-        try:
-            existing = users_collection.find_one({"username": username})
-            print("Existing user:", existing)
+        # Check if user already exists
+        existing_user = users_collection.find_one({
+            "username": username
+        })
 
-            result = users_collection.insert_one({
-                "username": username,
-                "password": password
-            })
+        if existing_user:
+            return "Username already exists ❌"
 
-            print("✅ Inserted ID:", result.inserted_id)
+        # Create new user
+        users_collection.insert_one({
+            "username": username,
+            "password": password,
+            "login_count": 0,
+            "last_login": None,
+            "created_at": datetime.now()
+        })
 
-        except Exception as e:
-            print("❌ ERROR:", e)
+        print("✅ New user created")
 
-        return redirect(url_for("login")) # 👈 This sends them to the login page
+        return redirect(url_for("login"))
 
     return render_template("signup.html")
-
     
-# ---------------- LOGIN ----------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        user = users_collection.find_one({"username": username, "password": password})
 
-        if user:
-            from flask import session
-            session["user"] = username  # 👈 Store the username here
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        print("🔐 Login attempt")
+        print("Username:", username)
+
+        # Find user by username
+        user = users_collection.find_one({
+            "username": username
+        })
+
+        print("User found:", user)
+
+        if user and user["password"] == password:
+
+            # Update login information in MongoDB
+            users_collection.update_one(
+                {"_id": user["_id"]},
+                {
+                    "$set": {
+                        "last_login": datetime.now()
+                    },
+                    "$inc": {
+                        "login_count": 1
+                    }
+                }
+            )
+
+            print("✅ Login successful")
+            print("📊 Login count updated")
+
+            # Store user in session
+            session["user"] = username
+
             return redirect(url_for("dashboard"))
-        else:
-            return "Invalid credentials ❌"
-    return render_template("login.html")
 
+        else:
+
+            print("❌ Invalid credentials")
+
+            return "Invalid credentials ❌"
+
+    return render_template("login.html")
 
 # ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
@@ -232,7 +279,6 @@ def music(mood="happy"):
     )
 
 
-# ---------------- INSIGHTS PAGE ----------------
 # ---------------- INSIGHTS PAGE (OPTIMIZED) ----------------
 from collections import Counter
 
@@ -272,10 +318,326 @@ def insights():
         most_mood=most_mood
     )
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+@app.route("/breathing")
+def breathing():
+    # Require the user to log in first
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("breathing.html")
 
 
-# ---------------- RUN SERVER ----------------
+# ---------------- ACADEMIC STRESS PLANNER ----------------
+
+study_tasks = db["study_tasks"]
+
+
+def planner_login_required():
+    """Return True when a user is logged in."""
+    return bool(session.get("user"))
+
+
+@app.route("/planner")
+def planner():
+    if not planner_login_required():
+        return redirect(url_for("login"))
+
+    username = session["user"]
+    today = date.today().isoformat()
+
+    tasks = list(
+        study_tasks.find({"username": username})
+        .sort([("completed", 1), ("due_date", 1), ("created_at", -1)])
+    )
+
+    total = len(tasks)
+    completed_count = sum(1 for task in tasks if task.get("completed"))
+    pending_count = total - completed_count
+    overdue_count = sum(
+        1 for task in tasks
+        if not task.get("completed")
+        and task.get("due_date")
+        and task["due_date"] < today
+    )
+
+    return render_template(
+        "planner.html",
+        tasks=tasks,
+        today=today,
+        total=total,
+        completed_count=completed_count,
+        pending_count=pending_count,
+        overdue_count=overdue_count
+    )
+
+
+@app.route("/planner/add", methods=["POST"])
+def planner_add():
+    if not planner_login_required():
+        return redirect(url_for("login"))
+
+    title = request.form.get("title", "").strip()
+    subject = request.form.get("subject", "").strip()
+    due_date = request.form.get("due_date", "").strip()
+    priority = request.form.get("priority", "medium").lower()
+    task_type = request.form.get("task_type", "assignment").lower()
+    minutes_raw = request.form.get("estimated_minutes", "30").strip()
+
+    if not title or len(title) > 120:
+        return "Please enter a task title (maximum 120 characters).", 400
+
+    if len(subject) > 80:
+        return "Subject must be 80 characters or fewer.", 400
+
+    try:
+        if due_date:
+            date.fromisoformat(due_date)
+
+        estimated_minutes = int(minutes_raw)
+        if not 5 <= estimated_minutes <= 600:
+            raise ValueError
+    except ValueError:
+        return "Please enter a valid date and a study duration between 5 and 600 minutes.", 400
+
+    if priority not in {"low", "medium", "high"}:
+        priority = "medium"
+
+    if task_type not in {"assignment", "exam", "revision", "project", "other"}:
+        task_type = "assignment"
+
+    study_tasks.insert_one({
+        "username": session["user"],
+        "title": title,
+        "subject": subject,
+        "due_date": due_date,
+        "priority": priority,
+        "task_type": task_type,
+        "estimated_minutes": estimated_minutes,
+        "completed": False,
+        "created_at": datetime.utcnow()
+    })
+
+    return redirect(url_for("planner"))
+
+
+@app.route("/planner/toggle/<task_id>", methods=["POST"])
+def planner_toggle(task_id):
+    if not planner_login_required():
+        return redirect(url_for("login"))
+
+    try:
+        object_id = ObjectId(task_id)
+    except Exception:
+        return "Invalid task ID.", 400
+
+    task = study_tasks.find_one({
+        "_id": object_id,
+        "username": session["user"]
+    })
+
+    if task:
+        study_tasks.update_one(
+            {
+                "_id": object_id,
+                "username": session["user"]
+            },
+            {"$set": {"completed": not task.get("completed", False)}}
+        )
+
+    return redirect(url_for("planner"))
+
+
+@app.route("/planner/delete/<task_id>", methods=["POST"])
+def planner_delete(task_id):
+    if not planner_login_required():
+        return redirect(url_for("login"))
+
+    try:
+        object_id = ObjectId(task_id)
+    except Exception:
+        return "Invalid task ID.", 400
+
+    study_tasks.delete_one({
+        "_id": object_id,
+        "username": session["user"]
+    })
+
+    return redirect(url_for("planner"))
+
+
+# ---------------- STUDY SESSION + STRESS CHECK-IN ----------------
+
+study_sessions = db["study_sessions"]
+
+
+@app.route("/study-session")
+def study_session():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    username = session["user"]
+
+    # Only show this student's tasks.
+    tasks = list(
+        study_tasks.find({"username": username})
+        .sort("due_date", 1)
+    )
+
+    # Resume an unfinished session if one is requested.
+    active_id = request.args.get("active")
+    active_session = None
+
+    if active_id:
+        try:
+            active_session = study_sessions.find_one({
+                "_id": ObjectId(active_id),
+                "username": username,
+                "completed": False
+            })
+        except Exception:
+            active_session = None
+
+    history = list(
+        study_sessions.find({
+            "username": username,
+            "completed": True
+        }).sort("finished_at", -1).limit(20)
+    )
+
+    for item in history:
+        before = item.get("stress_before")
+        after = item.get("stress_after")
+        item["stress_change"] = (
+            before - after
+            if isinstance(before, int) and isinstance(after, int)
+            else None
+        )
+
+    return render_template(
+        "study_session.html",
+        tasks=tasks,
+        active_session=active_session,
+        history=history
+    )
+
+
+@app.route("/study-session/start", methods=["POST"])
+def start_study_session():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    username = session["user"]
+
+    try:
+        stress_before = int(request.form.get("stress_before", ""))
+        duration = int(request.form.get("duration", "25"))
+    except (TypeError, ValueError):
+        return "Enter a valid stress rating and session duration.", 400
+
+    if not 1 <= stress_before <= 10:
+        return "Stress rating must be between 1 and 10.", 400
+
+    if duration not in {15, 25, 45, 60}:
+        return "Choose a supported session duration.", 400
+
+    task_id = request.form.get("task_id", "").strip()
+    task_title = "Independent study"
+
+    if task_id:
+        try:
+            task = study_tasks.find_one({
+                "_id": ObjectId(task_id),
+                "username": username
+            })
+        except Exception:
+            task = None
+
+        if not task:
+            return "The selected task was not found.", 400
+
+        task_title = task["title"]
+
+    result = study_sessions.insert_one({
+        "username": username,
+        "task_id": task_id or None,
+        "task_title": task_title,
+        "duration_minutes": duration,
+        "stress_before": stress_before,
+        "stress_after": None,
+        "reflection": "",
+        "started_at": datetime.utcnow(),
+        "finished_at": None,
+        "completed": False
+    })
+
+    return redirect(url_for(
+        "study_session",
+        active=str(result.inserted_id)
+    ))
+
+
+@app.route("/study-session/finish/<session_id>", methods=["POST"])
+def finish_study_session(session_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    try:
+        object_id = ObjectId(session_id)
+        stress_after = int(request.form.get("stress_after", ""))
+    except (TypeError, ValueError):
+        return "Invalid session or stress rating.", 400
+
+    if not 1 <= stress_after <= 10:
+        return "Stress rating must be between 1 and 10.", 400
+
+    reflection = request.form.get("reflection", "").strip()[:500]
+
+    result = study_sessions.update_one(
+        {
+            "_id": object_id,
+            "username": session["user"],
+            "completed": False
+        },
+        {
+            "$set": {
+                "stress_after": stress_after,
+                "reflection": reflection,
+                "finished_at": datetime.utcnow(),
+                "completed": True
+            }
+        }
+    )
+
+    if result.matched_count == 0:
+        return "Session not found or already completed.", 404
+
+    # Update the linked task only if it belongs to this user.
+    saved = study_sessions.find_one({
+        "_id": object_id,
+        "username": session["user"]
+    })
+
+    if saved and saved.get("task_id"):
+        try:
+            study_tasks.update_one(
+                {
+                    "_id": ObjectId(saved["task_id"]),
+                    "username": session["user"]
+                },
+                {"$set": {"last_study_session": datetime.utcnow()}}
+            )
+        except Exception:
+            pass
+
+    return redirect(url_for("study_session"))
+
+@app.route("/stress-buster")
+def stress_buster():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("stress_buster.html")
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)

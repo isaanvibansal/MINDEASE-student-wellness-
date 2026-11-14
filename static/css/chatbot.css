@@ -1,0 +1,194 @@
+/* MindEase AI floating assistant — scoped styles */
+.mind-ai-widget, .mind-ai-widget * { box-sizing: border-box; }
+
+.mind-ai-toggle {
+    position: fixed;
+    right: 26px;
+    bottom: 25px;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 19px;
+    border: 0;
+    border-radius: 999px;
+    background: #477f55;
+    color: #fff;
+    font: 600 13px "Poppins", sans-serif;
+    box-shadow: 0 12px 30px rgba(38, 78, 48, .25);
+    cursor: pointer;
+}
+.mind-ai-toggle:hover { background: #376b46; transform: translateY(-2px); }
+.mind-ai-toggle-icon { font-size: 19px; }
+
+.mind-ai-panel {
+    position: fixed;
+    right: 26px;
+    bottom: 91px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    width: min(390px, calc(100vw - 28px));
+    height: min(590px, calc(100dvh - 125px));
+    overflow: hidden;
+    border: 1px solid #dce8dc;
+    border-radius: 22px;
+    background: #fffefa;
+    box-shadow: 0 20px 65px rgba(36, 60, 42, .22);
+    font-family: "Poppins", sans-serif;
+}
+.mind-ai-panel[hidden], .mind-ai-history[hidden] { display: none !important; }
+
+.mind-ai-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 17px;
+    background: linear-gradient(120deg, #e4f0e3, #f2f2df);
+    border-bottom: 1px solid #e3ebdf;
+}
+.mind-ai-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mind-ai-avatar {
+    display: grid;
+    place-items: center;
+    flex: 0 0 39px;
+    width: 39px;
+    height: 39px;
+    border-radius: 50%;
+    background: #d0e6d0;
+    font-size: 20px;
+}
+.mind-ai-brand strong { display: block; color: #2e4d37; font-size: 14px; }
+.mind-ai-brand small { display: block; margin-top: 2px; color: #718674; font-size: 10px; }
+.mind-ai-header-actions { display: flex; gap: 6px; }
+.mind-ai-icon-button {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,.7);
+    color: #49634d;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.mind-ai-history {
+    max-height: 165px;
+    overflow-y: auto;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e8eee6;
+    background: #fbfcf8;
+}
+.mind-ai-history-title { margin: 0 0 7px; color: #738276; font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+.mind-ai-history-list { display: grid; gap: 5px; }
+.mind-ai-history-item {
+    width: 100%;
+    overflow: hidden;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 9px;
+    background: #eef4eb;
+    color: #435b47;
+    font: 11px "Poppins", sans-serif;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.mind-ai-history-empty { margin: 5px 0; color: #89958a; font-size: 11px; }
+
+.mind-ai-messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding: 17px 14px;
+    background: #fffefa;
+}
+.mind-ai-message { display: flex; width: 100%; }
+.mind-ai-message.is-user { justify-content: flex-end; }
+.mind-ai-bubble {
+    max-width: 86%;
+    padding: 11px 13px;
+    border-radius: 15px 15px 15px 5px;
+    background: #f0f3ec;
+    color: #405044;
+    font-size: 11px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.mind-ai-message.is-user .mind-ai-bubble {
+    border-radius: 15px 15px 5px 15px;
+    background: #e1eee0;
+    color: #36533d;
+}
+.mind-ai-message.is-typing .mind-ai-bubble { color: #819083; font-style: italic; }
+
+.mind-ai-starters { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 11px; background: #fffefa; }
+.mind-ai-starters button {
+    width: auto;
+    padding: 7px 9px;
+    border: 1px solid #dce8d9;
+    border-radius: 999px;
+    background: #f8faf5;
+    color: #58705b;
+    font: 10px "Poppins", sans-serif;
+    cursor: pointer;
+}
+.mind-ai-starters button:hover { background: #eaf3e8; }
+
+.mind-ai-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid #e8eee6;
+    background: #fff;
+}
+.mind-ai-form input {
+    min-width: 0;
+    flex: 1;
+    padding: 12px 14px;
+    border: 1px solid #e0e8dc;
+    border-radius: 999px;
+    outline: none;
+    background: #fafbf8;
+    color: #344638;
+    font: 11px "Poppins", sans-serif;
+}
+.mind-ai-form input:focus { border-color: #8caf8d; box-shadow: 0 0 0 3px rgba(110, 158, 112, .12); }
+.mind-ai-send {
+    width: auto;
+    min-width: 58px;
+    padding: 11px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: #548b5e;
+    color: white;
+    font: 600 11px "Poppins", sans-serif;
+    cursor: pointer;
+}
+.mind-ai-send:disabled { opacity: .55; cursor: wait; }
+.mind-ai-disclaimer {
+    padding: 0 12px 10px;
+    background: #fff;
+    color: #929b91;
+    font: 9px "Poppins", sans-serif;
+    text-align: center;
+}
+
+@media (max-width: 520px) {
+    .mind-ai-toggle { right: 15px; bottom: 15px; padding: 13px 16px; }
+    .mind-ai-panel {
+        right: 10px;
+        bottom: 76px;
+        width: calc(100vw - 20px);
+        height: min(620px, calc(100dvh - 95px));
+        border-radius: 19px;
+    }
+}

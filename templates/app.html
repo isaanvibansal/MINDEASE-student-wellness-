@@ -1,150 +1,209 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>MindEase</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindEase | Find Your Balance</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
 
-<!-- NAVBAR -->
+<body class="landing-page">
 
-<nav class="navbar">
-    <div class="logo">
-        MindEase
-    </div>
+    <!-- NAVIGATION -->
+    <header class="landing-nav">
+        <a href="{{ url_for('home') }}" class="landing-logo">
+            <span class="logo-symbol">✳</span>
+            MindEase
+        </a>
 
-    <div class="nav-links">
-        <a href="/login" class="btn-outline">Login</a>
-        <a href="/signup" class="btn-green">Get Started</a>
-    </div>
-</nav>
+        <nav class="landing-nav-links">
+            <a href="#how-it-works">How it works</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+        </nav>
 
-<!-- HERO SECTION -->
-
-<section class="hero">
-
-    <div class="overlay"></div>
-
-    <div class="hero-content">
-        <div class="hero-badge">
-    🌿 MENTAL WELLNESS FOR STUDENTS
-        </div>
-
-        <h1>
-            Your Path to
-            <span>Wellness</span>
-            Starts Here
-        </h1>
-
-        <p>
-            A safe and supportive space to understand your feelings,
-            build healthy habits and track your emotional wellness.
-        </p>
-
-        <div class="hero-buttons">
-            <a href="/signup" class="btn-white">
-                Get Started
-            </a>
-
-            <a href="/login" class="btn-glass">
-                Login
+        <div class="landing-auth">
+            <a href="{{ url_for('login') }}" class="landing-login">Log in</a>
+            <a href="{{ url_for('signup') }}" class="landing-get-started">
+                <span>Get started</span>
             </a>
         </div>
+    </header>
 
-    </div>
+    <!-- HERO -->
+    <main>
+        <section class="landing-hero">
+            <div class="landing-hero-overlay"></div>
 
-</section>
+            <div class="landing-hero-content">
+                <span class="landing-eyebrow">
+                    ✦ YOUR SPACE TO RESET
+                </span>
 
-<!-- FEATURES -->
+                <h1>
+                    Your path to mental wellness<br>
+                    <span>starts here.</span>
+                </h1>
 
-<section class="features-section">
+                <p class="landing-description">
+                    Student life can feel overwhelming. Take a moment to
+                    understand your emotions, clear your mind and move
+                    forward at your own pace.
+                </p>
 
-    <h4>WHAT WE OFFER</h4>
-    <h2>Everything You Need To Thrive</h2>
+                <div class="landing-hero-actions">
+                    <a href="{{ url_for('signup') }}"
+                       class="landing-primary-btn">
+                        Begin your journey <span>→</span>
+                    </a>
 
-    <div class="features-grid">
-        <div class="feature-card">
-    <div class="feature-icon icon-green">😊</div>
-    <h3>Mood Tracker</h3>
-    <p>Log daily emotions and identify emotional patterns.</p>
-</div>
+                    <a href="#features" class="landing-secondary-btn">
+                        Explore MindEase
+                    </a>
+                </div>
+            </div>
 
-<div class="feature-card">
-    <div class="feature-icon icon-yellow">📔</div>
-    <h3>Daily Journal</h3>
-    <p>Reflect on thoughts and express feelings privately.</p>
-</div>
+        </section>
 
-<div class="feature-card">
-    <div class="feature-icon icon-purple">🎵</div>
-    <h3>Music Therapy</h3>
-    <p>Listen to Spotify playlists based on your mood.</p>
-</div>
+        <!-- INTRO -->
+        <section class="landing-intro" id="about">
+            <div>
+                <p class="landing-section-label">A LITTLE SPACE FOR YOU</p>
+                <h2>
+                    You don't have to<br>
+                    figure it all out <span>today.</span>
+                </h2>
+            </div>
 
-<div class="feature-card">
-    <div class="feature-icon icon-pink">📊</div>
-    <h3>Insights</h3>
-    <p>View mood statistics and wellness progress.</p>
-</div>
+            <p class="landing-intro-copy">
+                MindEase brings your emotional wellbeing and everyday
+                student life into one supportive space. Check in with
+                yourself, write things down and find small ways to reset.
+            </p>
+        </section>
 
-        
-    </div>
+        <!-- FEATURES -->
+        <section class="landing-features" id="features">
+            <div class="landing-section-heading">
+                <div>
+                    <p class="landing-section-label">MADE FOR STUDENT LIFE</p>
+                    <h2>Your wellbeing, <span>one step at a time.</span></h2>
+                </div>
 
-</section>
+                <p>Choose what you need today.<br>There is no perfect way to begin.</p>
+            </div>
 
-<!-- HOW IT WORKS -->
-<section class="steps-section">
+            <div class="landing-feature-grid">
 
-    <h4>SIMPLE TO USE</h4>
-    <h2>How it works</h2>
+                <article class="landing-feature-card feature-mood">
+                    <div class="landing-feature-top">
+                        <span class="landing-feature-icon">☀️</span>
+                        <span class="landing-feature-number">01</span>
+                    </div>
+                    <h3>Check in with yourself</h3>
+                    <p>
+                        Explore your emotions and record how you're
+                        feeling, without judgement.
+                    </p>
+                </article>
 
-    <div class="step">
-        <div class="step-circle">1</div>
-        <h3>Create Account</h3>
-        <p>Sign up in seconds. No complicated setup, just your name and password.</p>
-    </div>
+                <article class="landing-feature-card feature-journal">
+                    <div class="landing-feature-top">
+                        <span class="landing-feature-icon">📔</span>
+                        <span class="landing-feature-number">02</span>
+                    </div>
+                    <h3>Make space to reflect</h3>
+                    <p>
+                        Put your thoughts into words and give yourself
+                        room to process your day.
+                    </p>
+                </article>
 
-    <div class="step">
-        <div class="step-circle">2</div>
-        <h3>Log Your Mood</h3>
-        <p>Tell us how you're feeling today — one tap is all it takes.</p>
-    </div>
+                <article class="landing-feature-card feature-music">
+                    <div class="landing-feature-top">
+                        <span class="landing-feature-icon">🎧</span>
+                        <span class="landing-feature-number">03</span>
+                    </div>
+                    <h3>Find your moment of calm</h3>
+                    <p>
+                        Discover mood-based music and take a mindful
+                        break from the noise.
+                    </p>
+                    
+                </article>
 
-    <div class="step">
-        <div class="step-circle">3</div>
-        <h3>Explore & Reflect</h3>
-        <p>Journal, discover music, and see your wellness patterns grow.</p>
-    </div>
+                <article class="landing-feature-card feature-insights">
+                    <div class="landing-feature-top">
+                        <span class="landing-feature-icon">🌱</span>
+                        <span class="landing-feature-number">04</span>
+                    </div>
+                    <h3>Notice your progress</h3>
+                    <p>
+                        Look back at your mood history and build a
+                        better understanding of your patterns.
+                    </p>
+                    
+                </article>
 
-</section>
+            </div>
+        </section>
 
-<!-- WHY MINDEASE -->
-<!-- CTA SECTION -->
+        <!-- HOW IT WORKS -->
+        <section class="landing-how" id="how-it-works">
+            <p class="landing-section-label">SIMPLE BY DESIGN</p>
+            <h2>Start wherever you are.</h2>
 
-<section class="cta-section">
+            <div class="landing-steps">
+                <div class="landing-step">
+                    <span>01</span>
+                    <h3>Check in</h3>
+                    <p>Take a moment to notice how you feel.</p>
+                </div>
 
-    <h2>Start your wellness journey today</h2>
+                <div class="landing-step">
+                    <span>02</span>
+                    <h3>Choose your support</h3>
+                    <p>Journal, listen to music or take a breathing break.</p>
+                </div>
 
-    <p>
-        Join students who are taking care of their mental health,
-        one day at a time.
-    </p>
+                <div class="landing-step">
+                    <span>03</span>
+                    <h3>Reflect and grow</h3>
+                    <p>Use your personal insights to notice patterns over time.</p>
+                </div>
+            </div>
+        </section>
 
-    <a href="/signup" class="cta-btn">
-        Create Free Account
-    </a>
+        <!-- CTA -->
+        <section class="landing-cta">
+            <div class="landing-cta-content">
+                <p class="landing-section-label">YOUR NEXT CHAPTER STARTS HERE</p>
+                <h2>Make a little room<br>for <span>yourself.</span></h2>
+                <p>
+                    You deserve a moment to pause, reset and begin again.
+                </p>
 
-</section>
+                <a href="{{ url_for('signup') }}" class="landing-primary-btn">
+                    Get started with MindEase <span>→</span>
+                </a>
+            </div>
+            <div class="landing-cta-decoration">✳</div>
+        </section>
+    </main>
 
-<!-- FOOTER -->
+    <footer class="landing-footer">
+        <a href="{{ url_for('home') }}" class="landing-logo">
+            <span class="logo-symbol">✳</span> MindEase
+        </a>
+        <p>Made for student wellbeing, one small step at a time.</p>
+        <a href="{{ url_for('login') }}">Log in </a>
+    </footer>
 
-<footer class="footer-section">
-
-    <h3>🌿 MindEase</h3>
-
-    <p>
-        © 2026 MindEase • Built for student wellness
-    </p>
-
-</footer>
+</body>
+</html>

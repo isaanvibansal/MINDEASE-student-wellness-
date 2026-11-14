@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Breathing Exercise | MINDEASE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='wellness.css') }}">
+</head>
+<body class="breathing-body">
+    <main class="breathing-page">
+        <header class="breathing-header">
+            <a class="back-link" href="/dashboard">← Dashboard</a>
+            <span class="mini-brand">MINDEASE · MINDFUL MOMENT</span>
+        </header>
+
+        <section class="breathing-card">
+            <p class="quote-eyebrow">MAKE SPACE FOR YOURSELF</p>
+            <h1>Let's take a breath.</h1>
+            <p class="breathing-subtitle">Relax your shoulders. Breathe gently, and follow the circle at a comfortable pace.</p>
+
+            <div class="breathing-orbit">
+                <div id="breathCircle" class="breath-circle">
+                    <span id="breathPhase">Ready?</span>
+                    <strong id="breathCountdown">5:00</strong>
+                </div>
+            </div>
+
+            <p id="breathInstruction" class="breath-instruction" aria-live="polite">Press Start when you're ready.</p>
+
+            <div class="breathing-controls">
+                <button id="breathStart" class="wellness-primary" type="button">Start breathing</button>
+                <button id="breathPause" class="wellness-secondary" type="button" disabled>Pause</button>
+                <button id="breathReset" class="wellness-secondary" type="button">Reset</button>
+            </div>
+
+            <div class="breath-pattern">
+                <span><i class="pattern-dot inhale-dot"></i> Inhale · 4 sec</span>
+                <span><i class="pattern-dot hold-dot"></i> Hold · 2 sec</span>
+                <span><i class="pattern-dot exhale-dot"></i> Exhale · 6 sec</span>
+            </div>
+            <p class="gentle-note">Keep your breathing comfortable. Skip the hold or stop if you feel dizzy or uncomfortable.</p>
+        </section>
+
+        <section class="mini-quote">
+            <span aria-hidden="true">🌱</span>
+            <p>Rest is productive, too. You are allowed to pause.</p>
+        </section>
+    </main>
+    <script src="{{ url_for('static', filename='breathing.js') }}"></script>
+</body>
+</html>

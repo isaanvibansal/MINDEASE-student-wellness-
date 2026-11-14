@@ -1,0 +1,84 @@
+/* MindEase breathing + motivational quote additions */
+.wellness-dashboard { max-width: 1280px; }
+.wellness-intro { color: #476458; margin-top: -35px; margin-bottom: 12px; }
+.wellness-cards { flex-wrap: wrap; justify-content: center; gap: 34px; }
+.wellness-cards .dashboard-card-ui { width: 220px; }
+.wellness-breath-card { padding-top: 4px; }
+.wellness-emoji {
+    width: 120px; height: 120px; display: grid; place-items: center;
+    font-size: 66px; border-radius: 28px;
+    background: linear-gradient(145deg, #f5f9dc, #ccebdc);
+    margin-bottom: 8px;
+}
+.quote-card {
+    position: relative; max-width: 850px; margin: 58px auto 0; padding: 34px 36px 30px;
+    text-align: center; border-radius: 28px;
+    background: rgba(255,255,255,.78); border: 1px solid rgba(255,255,255,.85);
+    box-shadow: 0 14px 36px rgba(45, 85, 67, .10);
+}
+.quote-icon { color: #72a88b; font-family: Georgia, serif; font-size: 54px; line-height: .8; }
+.quote-eyebrow { letter-spacing: 2px; font-size: 11px; font-weight: 700; color: #5b8b74; margin: 10px 0 15px; }
+.quote-card blockquote { color: #253f34; font: 600 clamp(19px, 2.6vw, 27px)/1.55 Georgia, serif; }
+.quote-author { margin: 12px 0 18px; color: #678273; font-size: 13px; }
+.quote-refresh, .wellness-primary, .wellness-secondary {
+    border: 0; border-radius: 999px; padding: 12px 22px; cursor: pointer;
+    font: 600 14px Poppins, sans-serif; transition: transform .2s, box-shadow .2s;
+}
+.quote-refresh { background: #e1f1e7; color: #2f634b; }
+.quote-refresh:hover, .wellness-primary:hover, .wellness-secondary:hover { transform: translateY(-2px); }
+.wellness-footer { text-align: center; margin-top: 28px; color: #426c58; font-size: 13px; }
+.wellness-footer a { text-decoration: underline; }
+.breathing-body {
+    min-height: 100vh; font-family: Poppins, sans-serif;
+    background: radial-gradient(circle at top left, #f4f8dc 0, transparent 34%),
+                linear-gradient(135deg, #e1f4e8, #eef3ff 58%, #f9eee8);
+    color: #243d33; padding: 24px;
+}
+.breathing-page { width: min(900px, 100%); margin: 0 auto; }
+.breathing-header { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 8px 0 28px; }
+.back-link { color: #38634e; font-size: 14px; font-weight: 600; text-decoration: none; }
+.mini-brand { color: #779487; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; }
+.breathing-card {
+    padding: clamp(25px, 5vw, 52px); text-align: center; border-radius: 34px;
+    background: rgba(255,255,255,.76); border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 20px 60px rgba(45, 85, 67, .11);
+}
+.breathing-card h1 { font: 700 clamp(30px, 5vw, 44px)/1.2 Georgia, serif; margin-bottom: 12px; }
+.breathing-subtitle { max-width: 540px; margin: 0 auto; color: #6a8176; line-height: 1.8; font-size: 14px; }
+.breathing-orbit { width: 260px; height: 260px; margin: 32px auto 20px; display: grid; place-items: center; border-radius: 50%; background: #edf6ef; }
+.breath-circle {
+    width: 190px; height: 190px; border-radius: 50%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 7px;
+    background: radial-gradient(circle at 30% 25%, #d8f5d8, #9ed8bf);
+    box-shadow: 0 0 0 12px rgba(150, 207, 177, .18), 0 12px 32px rgba(81, 144, 111, .2);
+    transform: scale(.88); transition: transform 4s ease-in-out, background 1s;
+}
+.breath-circle.inhale { transform: scale(1.08); background: radial-gradient(circle at 30% 25%, #e1f5ce, #a3d7b9); transition-duration: 4s; }
+.breath-circle.hold { transform: scale(1.08); background: radial-gradient(circle at 30% 25%, #e0e7fa, #a9c5e9); transition-duration: 2s; }
+.breath-circle.exhale { transform: scale(.78); background: radial-gradient(circle at 30% 25%, #f7e8d9, #eac5b1); transition-duration: 6s; }
+#breathPhase { font-size: 18px; font-weight: 600; }
+#breathCountdown { font-size: 26px; color: #355e4a; }
+.breath-instruction { min-height: 26px; font-weight: 500; color: #567565; }
+.breathing-controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
+.wellness-primary { color: white; background: #39785a; box-shadow: 0 8px 20px rgba(57,120,90,.2); }
+.wellness-secondary { color: #35664d; background: #e5f0e8; }
+.wellness-primary:disabled, .wellness-secondary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.breath-pattern { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 22px; color: #688174; font-size: 12px; }
+.pattern-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; background: #91c5a4; }
+.hold-dot { background: #a9bfe8; } .exhale-dot { background: #e6b69b; }
+.gentle-note { max-width: 580px; margin: 24px auto 0; color: #8a9a91; font-size: 11px; line-height: 1.7; }
+.mini-quote { display: flex; align-items: center; justify-content: center; gap: 12px; color: #5d7e6c; margin: 25px auto; font-family: Georgia, serif; font-style: italic; }
+.mini-quote span { font-size: 24px; }
+@media (max-width: 650px) {
+    .wellness-dashboard { margin: 20px 12px; padding: 35px 18px; }
+    .wellness-intro { margin-top: -30px; margin-bottom: 20px; font-size: 13px; }
+    .wellness-cards { gap: 26px; }
+    .wellness-cards .dashboard-card-ui { width: 145px; }
+    .wellness-cards .dashboard-card-ui img, .wellness-emoji { width: 95px; height: 95px; }
+    .wellness-emoji { font-size: 52px; }
+    .quote-card { padding: 25px 18px; margin-top: 38px; }
+    .breathing-body { padding: 14px; }
+    .breathing-header { align-items: flex-start; flex-direction: column; }
+    .breathing-orbit { width: 230px; height: 230px; }
+    .breath-circle { width: 166px; height: 166px; }
+}

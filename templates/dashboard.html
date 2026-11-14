@@ -1,63 +1,260 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Your Dashboard | MINDEASE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MindEase | Dashboard</title>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
 </head>
-<body>
 
-<div class="dashboard-section">
+<body class="mind-dashboard-body">
 
-    <h1 class="dashboard-title">Your Dashboard</h1>
+<div class="mind-dashboard">
 
-    <div class="dashboard-cards">
+    <!-- SIDEBAR -->
+    <aside class="mind-sidebar">
+        <a class="mind-brand" href="{{ url_for('dashboard') }}">
+            <span class="brand-icon">🌿</span>
+            <span>MindEase<small>STUDENT WELLNESS</small></span>
+        </a>
 
-        <!-- MOOD TRACKER -->
-        <div class="dashboard-card-ui">
-            <img src="{{ url_for('static', filename='images/mood.png') }}" alt="Mood Tracker">
-            <p>Sifting through daily emotions</p>
-            <a href="/mood">
-                <button>Open</button>
+        <p class="sidebar-label">YOUR SPACE</p>
+
+        <nav class="mind-nav">
+            <a class="nav-item active" href="{{ url_for('dashboard') }}">
+                <span>⌂</span> Dashboard
+            </a>
+            <a class="nav-item" href="/mood">
+                <span>♡</span> Mood Tracker
+            </a>
+            <a class="nav-item" href="/journal">
+                <span>▤</span> My Journal
+            </a>
+            <a class="nav-item" href="/insights">
+                <span>▥</span> Insights
+            </a>
+
+            <p class="sidebar-label">STUDY & RELAX</p>
+
+            <a class="nav-item" href="{{ url_for('planner') }}">
+                <span>▦</span> Study Planner
+            </a>
+            <a class="nav-item" href="{{ url_for('study_session') }}">
+                <span>◷</span> Study & Reflect
+            </a>
+            <a class="nav-item" href="{{ url_for('breathing') }}">
+                <span>〰</span> Breathing Exercise
+            </a>
+            <a class="nav-item" href="{{ url_for('stress_buster') }}">
+                <span>✧</span> Stress Buster
+            </a>
+            <a class="nav-item" href="{{ url_for('music') }}">
+                <span>♫</span> Music Therapy
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-note">
+                <span>🌱</span>
+                <p>Small steps are still progress.</p>
+            </div>
+            <a class="logout-link" href="{{ url_for('logout') }}">
+                ↪ Log out
             </a>
         </div>
+    </aside>
 
-        <!-- JOURNAL -->
-        <div class="dashboard-card-ui">
-            <img src="{{ url_for('static', filename='images/journal.png') }}" alt="Journal">
-            <p>Write and reflect freely</p>
-            <a href="/journal">
-                <button>Open</button>
-            </a>
-        </div>
+    <!-- MAIN CONTENT -->
+    <main class="mind-main">
 
-        <!-- MUSIC THERAPY -->
-        <div class="dashboard-card-ui">
-            <img src="{{ url_for('static', filename='images/music.png') }}" alt="Music Therapy">
-            <p>Find music for your mood</p>
-            <a href="/music">
-                <button>Open</button>
-            </a>
-        </div>
+        <header class="mind-topbar">
+            <div>
+                <p class="eyebrow">YOUR PERSONAL WELLNESS SPACE</p>
+                <h1>Your Dashboard</h1>
+                <p class="topbar-subtitle">
+                    Take care of yourself while you work toward your goals.
+                </p>
+            </div>
+            <div class="topbar-leaf">🌿</div>
+        </header>
 
-       <!-- INSIGHTS -->
-       <div class="dashboard-card-ui">
-           <img src="{{ url_for('static', filename='images/insights.png') }}" alt="Insights">
-           <p>Track your Progress</p>
-           <a href="/insights">
-               <button>Open</button>
-           </a>
-       </div>
+        <!-- WELCOME BANNER -->
+        <section class="welcome-panel">
+            <div class="welcome-copy">
+                <span class="welcome-tag">A MOMENT FOR YOU</span>
+                <h2>A little progress,<br>every day.</h2>
+                <p>
+                    Check in with yourself, focus on what matters,
+                    and remember to take breaks.
+                </p>
+                <a class="welcome-button" href="/mood">
+                    Check in with my mood <span>→</span>
+                </a>
+            </div>
+            <div class="welcome-art" aria-hidden="true">🌼</div>
+        </section>
 
+        <!-- FEATURE CARDS -->
+        <section class="feature-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Your wellness toolkit</h2>
+                    <p>Choose what you need right now.</p>
+                </div>
+            </div>
 
-    </div>
+            <div class="mind-feature-grid">
 
+                <a class="mind-feature-card mood-feature" href="/mood">
+                    <div class="feature-icon">☀️</div>
+                    <h3>Mood Tracker</h3>
+                    <p>Check in with your feelings and find music for your mood.</p>
+                    <span class="feature-action">Track your mood →</span>
+                </a>
+
+                <a class="mind-feature-card journal-feature" href="/journal">
+                    <div class="feature-icon">📖</div>
+                    <h3>My Journal</h3>
+                    <p>Write freely, reflect on your day and make space for your thoughts.</p>
+                    <span class="feature-action">Write an entry →</span>
+                </a>
+
+                <a class="mind-feature-card insights-feature" href="/insights">
+                    <div class="feature-icon">📊</div>
+                    <h3>Insights</h3>
+                    <p>Look back at your mood and personal wellness progress.</p>
+                    <span class="feature-action">View insights →</span>
+                </a>
+
+                <a class="mind-feature-card planner-feature"
+                   href="{{ url_for('planner') }}">
+                    <div class="feature-icon">📚</div>
+                    <h3>Study Planner</h3>
+                    <p>Organize assignments, plan revision and manage deadlines.</p>
+                    <span class="feature-action">Plan your work →</span>
+                </a>
+
+                <a class="mind-feature-card session-feature"
+                   href="{{ url_for('study_session') }}">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Study & Reflect</h3>
+                    <p>Focus on one task and check in with your stress before and after.</p>
+                    <span class="feature-action">Start a session →</span>
+                </a>
+
+                <a class="mind-feature-card breathing-feature"
+                   href="{{ url_for('breathing') }}">
+                    <div class="feature-icon">🌬️</div>
+                    <h3>Breathing Exercise</h3>
+                    <p>Slow down, breathe gently and give yourself a quiet moment.</p>
+                    <span class="feature-action">Take a breath →</span>
+                </a>
+
+                <a class="mind-feature-card game-feature"
+                   href="{{ url_for('stress_buster') }}">
+                    <div class="feature-icon">🫧</div>
+                    <h3>Stress Buster</h3>
+                    <p>Take a playful little break with our bubble-popping game.</p>
+                    <span class="feature-action">Play a quick game →</span>
+                </a>
+
+                <a class="mind-feature-card music-feature"
+                   href="{{ url_for('music') }}">
+                    <div class="feature-icon">🎵</div>
+                    <h3>Music Therapy</h3>
+                    <p>Explore music that complements how you're feeling.</p>
+                    <span class="feature-action">Find your sound →</span>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- DAILY REMINDER -->
+        <section class="mind-quote-panel">
+            <div class="quote-decoration">“</div>
+            <div class="quote-content">
+                <p class="eyebrow">A LITTLE REMINDER FOR YOU</p>
+                <blockquote id="dailyQuote">
+                    You do not have to do everything today.
+                    Just take the next small step.
+                </blockquote>
+                <p id="quoteAuthor" class="quote-author">
+                    — MindEase
+                </p>
+                <button id="newQuoteBtn" class="quote-refresh" type="button">
+                    Another reminder ↻
+                </button>
+            </div>
+        </section>
+
+        <footer class="mind-footer">
+            <span>Made with care for your wellbeing 🌿</span>
+            <span>MindEase · Your pace matters.</span>
+        </footer>
+
+    </main>
 </div>
+
+<script src="{{ url_for('static', filename='wellness.js') }}"></script>
+<!-- Add this block just before </body> in templates/dashboard.html -->
+<div class="mind-ai-widget">
+    <button id="mindAiToggle" class="mind-ai-toggle"
+            type="button" aria-expanded="false" aria-controls="mindAiPanel">
+        <span class="mind-ai-toggle-icon">🌿</span>
+        <span>Chat with MindEase AI</span>
+    </button>
+
+    <section id="mindAiPanel" class="mind-ai-panel" aria-label="MindEase AI chat" hidden>
+        <header class="mind-ai-header">
+            <div class="mind-ai-brand">
+                <span class="mind-ai-avatar">🌱</span>
+                <div>
+                    <strong>MindEase AI</strong>
+                    <small>Your student wellness companion</small>
+                </div>
+            </div>
+            <div class="mind-ai-header-actions">
+                <button id="mindAiNewChat" class="mind-ai-icon-button"
+                        type="button" title="New chat" aria-label="New chat">＋</button>
+                <button id="mindAiHistoryButton" class="mind-ai-icon-button"
+                        type="button" title="Chat history" aria-label="Chat history">▤</button>
+                <button id="mindAiClose" class="mind-ai-icon-button"
+                        type="button" title="Close chat" aria-label="Close chat">×</button>
+            </div>
+        </header>
+
+        <div id="mindAiHistory" class="mind-ai-history" hidden>
+            <p class="mind-ai-history-title">Recent conversations</p>
+            <div id="mindAiHistoryList" class="mind-ai-history-list"></div>
+        </div>
+
+        <div id="mindAiMessages" class="mind-ai-messages" aria-live="polite"></div>
+
+        <div class="mind-ai-starters">
+            <button type="button" data-mind-ai-prompt="I'm feeling stressed about my exams. Can you help?">Exam stress</button>
+            <button type="button" data-mind-ai-prompt="Can you help me make a realistic study plan?">Study plan</button>
+            <button type="button" data-mind-ai-prompt="Can we do a quick daily check-in?">Daily check-in</button>
+        </div>
+
+        <form id="mindAiForm" class="mind-ai-form">
+            <input id="mindAiInput" type="text" maxlength="4000"
+                   placeholder="Share what's on your mind…" autocomplete="off"
+                   aria-label="Your message">
+            <button id="mindAiSend" class="mind-ai-send" type="submit">Send</button>
+        </form>
+        <p class="mind-ai-disclaimer">
+            Supportive guidance, not professional or emergency care.
+        </p>
+    </section>
+</div>
+
+<script src="{{ url_for('static', filename='js/chatbot.js') }}" defer></script>
 
 </body>
 </html>

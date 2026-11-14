@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stress Buster | MindEase</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .game-page {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 32px;
+            border-radius: 24px;
+            background: rgba(235, 249, 239, 0.96);
+            color: #294238;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .game-page h1 {
+            font-size: clamp(28px, 4vw, 42px);
+            margin-bottom: 8px;
+        }
+
+        .game-subtitle {
+            color: #64786d;
+            margin-bottom: 24px;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: 22px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 14px 24px;
+            border-radius: 16px;
+            min-width: 110px;
+            box-shadow: 0 4px 15px #29423812;
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 25px;
+            color: #39894d;
+        }
+
+        #bubbleArea {
+            position: relative;
+            height: 360px;
+            overflow: hidden;
+            border-radius: 20px;
+            border: 2px solid #cce8d2;
+            background: linear-gradient(160deg, #e4f7e9, #f7f5df);
+            margin: 20px 0;
+        }
+
+        .bubble {
+            position: absolute;
+            border: 2px solid #ffffffc9;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: inset -5px -7px 12px #ffffff50;
+            animation: floatBubble 2.5s ease-in-out infinite alternate;
+            transition: transform 0.12s;
+        }
+
+        .bubble:hover {
+            transform: scale(1.12);
+        }
+
+        @keyframes floatBubble {
+            from { translate: 0 0; }
+            to { translate: 0 -9px; }
+        }
+
+        .game-button {
+            border: none;
+            border-radius: 28px;
+            padding: 13px 28px;
+            margin: 6px;
+            background: #43a653;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .game-button:hover {
+            background: #318843;
+        }
+
+        .game-message {
+            min-height: 28px;
+            font-weight: 600;
+        }
+
+        .game-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #347b43;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .game-page { margin: 16px; padding: 20px; }
+            #bubbleArea { height: 320px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .bubble { animation: none; }
+        }
+    </style>
+</head>
+
+<body>
+<main class="game-page">
+    <div style="font-size: 48px;">🫧</div>
+    <h1>Your little stress break</h1>
+    <p class="game-subtitle">
+        Take a breath, pop some bubbles, and give yourself a moment.
+        There's no pressure to get a high score.
+    </p>
+
+    <div class="game-stats">
+        <div class="stat-card">
+            Score
+            <strong id="score">0</strong>
+        </div>
+        <div class="stat-card">
+            Time
+            <strong><span id="time">30</span>s</strong>
+        </div>
+    </div>
+
+    <div id="bubbleArea"
+         role="group"
+         aria-label="Bubble popping game area">
+    </div>
+
+    <p id="gameMessage" class="game-message" aria-live="polite">
+        Ready for a tiny break?
+    </p>
+
+    <button class="game-button" id="startButton"
+            type="button" onclick="startGame()">
+        Start game
+    </button>
+
+    <div>
+        <a class="game-back" href="{{ url_for('dashboard') }}">
+            ← Back to Dashboard
+        </a>
+    </div>
+</main>
+
+<script>
+    const area = document.getElementById("bubbleArea");
+    const scoreDisplay = document.getElementById("score");
+    const timeDisplay = document.getElementById("time");
+    const message = document.getElementById("gameMessage");
+    const startButton = document.getElementById("startButton");
+
+    let score = 0;
+    let seconds = 30;
+    let timer = null;
+    let spawnTimer = null;
+    let running = false;
+
+    const bubbleColors = [
+        "#9edbb0", "#b8d9f5", "#f6d8a8",
+        "#d7c6f5", "#f3bfc5"
+    ];
+
+    function createBubble() {
+        if (!running) return;
+
+        const bubble = document.createElement("button");
+        bubble.type = "button";
+        bubble.className = "bubble";
+        bubble.setAttribute("aria-label", "Pop bubble");
+
+        const size = 35 + Math.random() * 40;
+        const maxX = Math.max(0, area.clientWidth - size);
+        const maxY = Math.max(0, area.clientHeight - size);
+
+        bubble.style.width = size + "px";
+        bubble.style.height = size + "px";
+        bubble.style.left = Math.random() * maxX + "px";
+        bubble.style.top = Math.random() * maxY + "px";
+        bubble.style.background =
+            bubbleColors[Math.floor(Math.random() * bubbleColors.length)];
+
+        bubble.addEventListener("click", () => {
+            if (!running) return;
+            score++;
+            scoreDisplay.textContent = score;
+            bubble.remove();
+            createBubble();
+        });
+
+        area.appendChild(bubble);
+    }
+
+    function startGame() {
+        clearInterval(timer);
+        clearInterval(spawnTimer);
+
+        score = 0;
+        seconds = 30;
+        running = true;
+        area.replaceChildren();
+
+        scoreDisplay.textContent = score;
+        timeDisplay.textContent = seconds;
+        message.textContent = "Go at your own pace. Just enjoy the moment.";
+        startButton.textContent = "Restart game";
+
+        for (let i = 0; i < 7; i++) createBubble();
+
+        spawnTimer = setInterval(() => {
+            if (area.children.length < 14) createBubble();
+        }, 650);
+
+        timer = setInterval(() => {
+            seconds--;
+            timeDisplay.textContent = seconds;
+
+            if (seconds <= 0) endGame();
+        }, 1000);
+    }
+
+    function endGame() {
+        running = false;
+        clearInterval(timer);
+        clearInterval(spawnTimer);
+        area.replaceChildren();
+
+        message.textContent =
+            "Your break is complete. You popped " + score +
+            " bubbles. Take one slow breath before you continue. 🌿";
+
+        startButton.textContent = "Play again";
+    }
+
+    function finishEarly() {
+        if (running) {
+            endGame();
+        } else {
+            message.textContent =
+                "That's okay too. Take a slow breath and return when you're ready. 🌿";
+        }
+    }
+</script>
+</body>
+</html>
