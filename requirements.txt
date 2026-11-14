@@ -1,9 +1,8 @@
 
-
+Flask
+pymongo
+dnspython
+gunicorn
 groq
 python-dotenv
-
-Flask
-pymongo[srv]
-gunicorn
-
+numpy
